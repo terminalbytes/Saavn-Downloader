@@ -13,6 +13,7 @@ class Album():
         self.songs_json = []
         self.album_name = ''
         self.url = url
+        self.artist_name = ''
 
     def getAlbumID(self, url=None):
         if url:
@@ -32,34 +33,41 @@ class Album():
         except Exception as e:
             print("Unable to get albumID: {0}".format(e))
         return self.albumID
-    
+
     def setAlbumID(self, albumID):
         self.albumID = albumID
-    
+
     def getAlbum(self, albumID=None):
         if albumID is None:
             albumID = self.albumID
         response = requests.get(
             'https://www.jiosaavn.com/api.php?_format=json&__call=content.getAlbumDetails&albumid={0}'.format(albumID),
             verify=False, proxies=self.proxies, headers=self.headers)
+        print (response.text)
+        # return
         if response.status_code == 200:
             self.songs_json = [x for x in response.text.splitlines() if x.strip().startswith('{')][0]
             self.songs_json = json.loads(self.songs_json)
-            print("Album name: ",self.songs_json["name"])
+            self.artist_name = self.songs_json["primary_artists"]
+            print("Album name: ",self.songs_json["name"], "Artist name: ", self.artist_name)
             self.album_name=self.songs_json["name"]
             self.album_name = self.album_name.replace("&quot;", "'")
-        return self.songs_json, self.album_name
-    
+        # return self.songs_json, self.album_name
+
     def downloadAlbum(self, artist_name=''):
         if self.albumID is not None:
             print("Initiating Album Download")
             manager = Manager()
             self.getAlbum()
+
+            if not artist_name:
+                artist_name = self.artist_name
+
             if artist_name:
                 manager.downloadSongs(self.songs_json, self.album_name, artist_name=artist_name)
             else:
                 manager.downloadSongs(self.songs_json, self.album_name)
-    
+
     def start_download(self):
         self.getAlbumID()
         self.downloadAlbum()

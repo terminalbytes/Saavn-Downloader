@@ -17,16 +17,16 @@ class Manager():
         self.unicode = str
         self.args = argManager()
         self.des_cipher = self.setDecipher()
-    
+
     def setDecipher(self):
         return des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
-    
+
     def get_dec_url(self, enc_url):
         enc_url = base64.b64decode(enc_url.strip())
         dec_url = self.des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
         dec_url = dec_url.replace('_96.mp4', '_320.mp4')
         return dec_url
-    
+
     def format_filename(self, filename):
         filename = html.unescape(filename) + '.m4a'
         filename = filename.replace("\"", "'")
@@ -39,7 +39,7 @@ class Manager():
         filename = filename.replace("*", "-")
         filename = filename.replace("|", "-")
         return filename
-    
+
     def get_download_location(self, *args):
         if self.args.outFolder is None:
             location = os.getcwd()
@@ -48,7 +48,7 @@ class Manager():
         for folder in args:
             location = os.path.join(location, folder)
         return location
-    
+
     def start_download(self, filename, location, dec_url):
         if os.path.isfile(location):
             print("Downloaded {0}".format(filename))
@@ -58,9 +58,12 @@ class Manager():
             obj = SmartDL(dec_url, location, timeout=REQUEST_TIMEOUT)
             obj.start()
             return True
-    
+
     def downloadSongs(self, songs_json, album_name='songs', artist_name='Non-Artist'):
         for song in songs_json['songs']:
+            print(song)
+            artist_name = song['primary_artists'].replace('/', '-')
+            album_name = song['album'].replace('/', '-')
             try:
                 dec_url = self.get_dec_url(song['encrypted_media_url'])
                 filename = self.format_filename(song['song'])
@@ -82,7 +85,7 @@ class Manager():
                     print('\n')
             except Exception as e:
                 print('Download Error : {0}'.format(e))
-    
+
     def addtags(self, filename, json_data, playlist_name):
         audio = MP4(filename)
         audio['\xa9nam'] = html.unescape(self.unicode(json_data['song']))
