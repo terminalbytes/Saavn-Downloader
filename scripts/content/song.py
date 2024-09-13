@@ -71,6 +71,13 @@ class Song():
     def downloadSong(self, album_name='songs', artist_name='Non-Artist'):
         manager = Manager()
         song = self.song_json[self.songID]
+        print(song)
+        # artist_name = ", ".join([artist["name"] for artist in song["more_info"]["artistMap"]["primary_artists"]])
+        # Pick only the first primary artist
+        artist_name = song["more_info"]["artistMap"]["primary_artists"][0]["name"]
+        # artist_name = "DJ Snake"
+        album_name = song['more_info']['album'].replace('/', '-').replace(' &amp; ', '-').replace('&amp;', '-')
+        print("Downloading song, Artist: {}, Album: {}".format(artist_name, album_name))
         try:
             dec_url = manager.get_dec_url(song["more_info"]['encrypted_media_url'])
             filename = manager.format_filename(song['title'])

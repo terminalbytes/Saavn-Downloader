@@ -62,8 +62,12 @@ class Manager():
     def downloadSongs(self, songs_json, album_name='songs', artist_name='Non-Artist'):
         for song in songs_json['songs']:
             print(song)
-            artist_name = song['primary_artists'].replace('/', '-')
-            album_name = song['album'].replace('/', '-')
+            artists = song['primary_artists'].replace('/', '-').replace(' &amp; ', '-').replace('&amp;', '-')
+            # Pick the first one from CSV
+            artist_name = artists.split(',')[0]
+            # album_name = "Iski Bhen Ki Maje Maje"
+            album_name = song['album'].replace('/', '-').replace(' &amp; ', '-').replace('&amp;', '-')
+            print("Artist: {}, Album: {}".format(artist_name, album_name))
             try:
                 dec_url = self.get_dec_url(song['encrypted_media_url'])
                 filename = self.format_filename(song['song'])
