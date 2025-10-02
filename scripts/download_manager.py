@@ -109,8 +109,13 @@ class Manager():
         #    audio['rtng'] = [(str(4))]
         # Replace resolution pattern (e.g., 150x150, 50x50) with 500x500 and use .jpg format
         cover_url = re.sub(r'\d+x\d+\.(jpg|webp|png)', '500x500.jpg', json_data['image'])
-        fd = urllib.request.urlopen(cover_url)
-        cover = MP4Cover(fd.read(), getattr(MP4Cover, 'FORMAT_PNG' if cover_url.endswith('png') else 'FORMAT_JPEG'))
-        fd.close()
-        audio['covr'] = [cover]
+        print(f"Downloading cover image from: {cover_url}")
+        try:
+            fd = urllib.request.urlopen(cover_url)
+            cover = MP4Cover(fd.read(), getattr(MP4Cover, 'FORMAT_PNG' if cover_url.endswith('png') else 'FORMAT_JPEG'))
+            fd.close()
+            audio['covr'] = [cover]
+            print("Cover image downloaded successfully")
+        except Exception as e:
+            print(f"Failed to download cover image: {e}")
         audio.save()
