@@ -4,6 +4,7 @@ import html
 import json
 import base64
 import os
+import re
 
 from pySmartDL import SmartDL
 
@@ -106,7 +107,8 @@ class Manager():
         audio['cprt'] = html.unescape(self.unicode(json_data['label']))
         # if track['explicit']:
         #    audio['rtng'] = [(str(4))]
-        cover_url = json_data['image'][:-11] + '500x500.jpg'
+        # Replace resolution pattern (e.g., 150x150, 50x50) with 500x500 and use .jpg format
+        cover_url = re.sub(r'\d+x\d+\.(jpg|webp|png)', '500x500.jpg', json_data['image'])
         fd = urllib.request.urlopen(cover_url)
         cover = MP4Cover(fd.read(), getattr(MP4Cover, 'FORMAT_PNG' if cover_url.endswith('png') else 'FORMAT_JPEG'))
         fd.close()
