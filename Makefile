@@ -38,6 +38,10 @@ ts-status:
 run-now:
 	docker compose exec saavn-downloader python /app/download_reloaded.py -o /mnt/storage-box/music -f /app/urls.txt
 
+# Check URL - fetch playlist info
+check-url:
+	docker compose exec saavn-downloader /app/check-url.sh
+
 # Remove containers and volumes
 clean:
 	docker compose down -v

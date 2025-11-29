@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     iptables \
     procps \
+    jq \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Tailscale
@@ -21,6 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY scripts/ ./scripts/
 COPY download_reloaded.py .
 COPY urls.txt .
+COPY check-url.sh .
 
 # Copy entrypoint script
 COPY docker/entrypoint.sh /entrypoint.sh
