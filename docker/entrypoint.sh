@@ -37,6 +37,10 @@ echo "[tailscale] Status:"
 tailscale status
 
 echo ""
+echo "[tailscale] Public IP:"
+curl -s ifconfig.me && echo ""
+
+echo ""
 echo "[service] Starting download loop (every ${POLL_INTERVAL}s)..."
 echo ""
 
