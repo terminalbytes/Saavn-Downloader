@@ -70,32 +70,38 @@ class Manager():
 
     def downloadSongs(self, songs_json, album_name='songs', artist_name='Non-Artist'):
         for song in songs_json['songs']:
-            print(song)
             artists = song['primary_artists'].replace('/', '-').replace(' &amp; ', '-').replace('&amp;', '-')
             # Pick the first one from CSV
             artist_name = artists.split(',')[0]
-            # album_name = "Iski Bhen Ki Maje Maje"
             album_name = song['album'].replace('/', '-').replace(' &amp; ', '-').replace('&amp;', '-')
-            print("Artist: {}, Album: {}".format(artist_name, album_name))
             try:
                 dec_url = self.get_dec_url(song['encrypted_media_url'])
                 filename = self.format_filename(song['song'])
             except Exception as e:
                 print('Download Error: {0}'.format(e))
+                continue
             try:
                 location = self.get_download_location(artist_name, album_name, filename)
-                has_downloaded = self.start_download(filename, location, dec_url)
-                if has_downloaded:
-                    try:
-                        name = songs_json['name'] if ('name' in songs_json) else songs_json['listname']
-                    except:
-                        name = ''
-                    try:
-                        self.addtags(location, song, name)
-                    except Exception as e:
-                        print("============== Error Adding Meta Data ==============")
-                        print("Error : {0}".format(e))
-                    print('\n')
+                # Skip if file already exists
+                if os.path.isfile(location):
+                    self.skipped_count += 1
+                    continue
+                # Log only when actually downloading
+                print("Artist: {}, Album: {}".format(artist_name, album_name))
+                print("Downloading: {0}".format(filename))
+                obj = SmartDL(dec_url, location, timeout=REQUEST_TIMEOUT)
+                obj.start()
+                self.downloaded_count += 1
+                try:
+                    name = songs_json['name'] if ('name' in songs_json) else songs_json['listname']
+                except:
+                    name = ''
+                try:
+                    self.addtags(location, song, name)
+                except Exception as e:
+                    print("============== Error Adding Meta Data ==============")
+                    print("Error : {0}".format(e))
+                print('')
             except Exception as e:
                 print('Download Error : {0}'.format(e))
 
