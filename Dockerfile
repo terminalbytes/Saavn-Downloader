@@ -29,7 +29,6 @@ RUN chmod +x /entrypoint.sh
 RUN mkdir -p /var/lib/tailscale
 
 ENV PYTHONUNBUFFERED=1
-ENV TS_USERSPACE=true
 ENV TS_EXIT_NODE=indian
 ENV POLL_INTERVAL=120
 

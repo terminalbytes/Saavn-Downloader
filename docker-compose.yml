@@ -3,8 +3,7 @@ services:
     build: .
     container_name: saavn-downloader
     restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
+    privileged: true
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_EXIT_NODE=${TS_EXIT_NODE:-indian}

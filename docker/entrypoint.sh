@@ -12,9 +12,14 @@ echo "Poll interval: ${POLL_INTERVAL}s"
 echo "Exit node: ${TS_EXIT_NODE:-indian}"
 echo ""
 
-# Start tailscaled in userspace mode (background)
-echo "[tailscale] Starting tailscaled in userspace mode..."
-tailscaled --state=/var/lib/tailscale/tailscaled.state --tun=userspace-networking &
+# Fix reverse-path filtering for exit node support
+echo "[network] Setting rp_filter=2 for exit node support..."
+sysctl -w net.ipv4.conf.all.rp_filter=2
+sysctl -w net.ipv4.conf.default.rp_filter=2
+
+# Start tailscaled (background)
+echo "[tailscale] Starting tailscaled..."
+tailscaled --state=/var/lib/tailscale/tailscaled.state &
 TAILSCALED_PID=$!
 
 # Wait for tailscaled to be ready
