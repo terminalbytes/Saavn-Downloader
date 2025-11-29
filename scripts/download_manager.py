@@ -18,6 +18,8 @@ class Manager():
         self.unicode = str
         self.args = argManager()
         self.des_cipher = self.setDecipher()
+        self.downloaded_count = 0
+        self.skipped_count = 0
 
     def setDecipher(self):
         return des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
@@ -52,13 +54,19 @@ class Manager():
 
     def start_download(self, filename, location, dec_url):
         if os.path.isfile(location):
-            print("Downloaded {0}".format(filename))
+            self.skipped_count += 1
             return False
-        else :
-            print("Downloading {0}".format(filename))
+        else:
+            print("Downloading: {0}".format(filename))
             obj = SmartDL(dec_url, location, timeout=REQUEST_TIMEOUT)
             obj.start()
+            self.downloaded_count += 1
             return True
+
+    def print_summary(self):
+        print("\n--- Summary ---")
+        print("Downloaded: {0}".format(self.downloaded_count))
+        print("Skipped (already exist): {0}".format(self.skipped_count))
 
     def downloadSongs(self, songs_json, album_name='songs', artist_name='Non-Artist'):
         for song in songs_json['songs']:

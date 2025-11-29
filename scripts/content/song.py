@@ -103,6 +103,7 @@ class Song():
                 print('\n')
         except Exception as e:
             print('Download Error : {0}'.format(e))
+        manager.print_summary()
 
     def start_download(self):
         self.getSongID()

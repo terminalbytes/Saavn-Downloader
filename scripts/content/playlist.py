@@ -47,6 +47,7 @@ class Playlist():
             print("Initiating Playlist Downloading")
             manager = Manager()
             manager.downloadSongs(self.getPlaylist())
+            manager.print_summary()
     
     def start_download(self):
         self.getPlaylistID()
