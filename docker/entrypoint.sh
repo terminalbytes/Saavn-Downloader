@@ -32,7 +32,7 @@ if [ -z "$TS_AUTHKEY" ]; then
 fi
 
 echo "[tailscale] Authenticating..."
-tailscale up --authkey="${TS_AUTHKEY}" --hostname="saavn-downloader"
+tailscale up --authkey="${TS_AUTHKEY}" --hostname="saavn-downloader" --reset
 
 # Set exit node
 echo "[tailscale] Setting exit node to ${TS_EXIT_NODE:-indian}..."
