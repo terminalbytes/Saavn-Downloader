@@ -1,0 +1,22 @@
+services:
+  saavn-downloader:
+    build: .
+    container_name: saavn-downloader
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_EXIT_NODE=${TS_EXIT_NODE:-indian}
+      - POLL_INTERVAL=${POLL_INTERVAL:-120}
+    volumes:
+      - /mnt/storage-box/music:/mnt/storage-box/music
+      - tailscale-state:/var/lib/tailscale
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+volumes:
+  tailscale-state:
